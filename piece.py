@@ -1,5 +1,6 @@
 import config
 
+
 class Piece():
     def __init__(self, color="") -> None:
         self.color = color
@@ -11,7 +12,6 @@ class Piece():
 
 class Rook(Piece):
     value = 5
-    size = (100, 100)
 
     def __init__(self, color) -> None:
         super().__init__(color)
@@ -24,10 +24,18 @@ class Rook(Piece):
     def __str__(self) -> str:
         return f"{self.color} Rook"
 
+    def move_possibility(self, position):
+        lst_position = []
+        for i in range(0, 8):
+            if i != position[0]:
+                lst_position.append((i, position[1]))
+            if i != position[1]:
+                lst_position.append((position[0], i))
+        return lst_position
+
 
 class Knight(Piece):
     value = 3
-    size = (100,100)
 
     def __init__(self, color) -> None:
         super().__init__(color)
@@ -40,10 +48,17 @@ class Knight(Piece):
     def __str__(self) -> str:
         return f"{self.color} Knight"
 
+    def move_possibility(self, position):
+        possibility = [(-2, -1), (-2, 1), (-1, -2), (1, -2), (2, -1), (2, 1), (-1, 2), (1, 2)]
+        lst_position = []
+        for elt in possibility:
+            if (position[0] + elt[0] >= 0 and position[0] + elt[0] <= 7) and (position[1] + elt[1] >= 0 and position[1] + elt[1] <= 7):
+                lst_position.append((position[0] + elt[0], position[1] + elt[1]))
+        return lst_position
+
 
 class Bishop(Piece):
     value = 3
-    size = (100,100)
 
     def __init__(self, color) -> None:
         super().__init__(color)
@@ -59,7 +74,6 @@ class Bishop(Piece):
 
 class Pawn(Piece):
     value = 1
-    size = (100, 100)
 
     def __init__(self, color) -> None:
         super().__init__(color)
@@ -75,7 +89,6 @@ class Pawn(Piece):
 
 class Queen(Piece):
     value = 9
-    size = (100, 100)
 
     def __init__(self, color) -> None:
         super().__init__(color)
@@ -91,7 +104,6 @@ class Queen(Piece):
 
 class King(Piece):
     value = 0
-    size = (100, 90)
 
     def __init__(self, color) -> None:
         super().__init__(color)

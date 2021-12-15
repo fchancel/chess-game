@@ -2,7 +2,6 @@ from piece import Piece, Rook, Bishop, Knight, Pawn, King, Queen
 import config
 
 class Board():
-    board_img = config.BOARD
 
     def __init__(self) -> None:
         self.square = [

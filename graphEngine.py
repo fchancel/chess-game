@@ -1,36 +1,63 @@
 import pygame
 import config
+from board import Board
 
 
 class GraphEngine():
     position_board = (0, 0)
-    size_board = (600, 600)
+    size_board = (800, 800)
     size_square = (size_board[0] // 8)
+    size_piece = (size_board[0] // 8, size_board[1] // 8)
 
     def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption(config.PROGRAM_NAME)
+
         self.screen = pygame.display.set_mode((800, 800))
-        self.board_rect = pygame.Rect(self.position_board, self.size_board)
-        board_img = pygame.image.load(config.BOARD)
-        self.board_img = pygame.transform.scale(board_img, self.size_board)
+        self.board_img = self._make_board_img()
+        self.lst_board_rect = self._make_list_rect_board()
 
-
+    def _make_list_rect_board(self) -> list:
         board_rect = []
         for i in range(0, 8):
             board_rect.append([])
-            for j in range(0,8):
-                board_rect[i].append(pygame.Rect(j * self.size_square, i * self.size_square, self.size_square, self.size_square))
-        self.board_rect = board_rect
+            for j in range(0, 8):
+                board_rect[i].append(pygame.Rect(
+                    j * self.size_square, i * self.size_square, self.size_square, self.size_square))
+        return board_rect
+
+    def _make_board_img(self):
+        board_img = pygame.image.load(config.BOARD)
+        return pygame.transform.scale(board_img, self.size_board)
 
     def blit_game(self, board):
         self.screen.blit(self.board_img, self.position_board)
-        # pygame.draw.rect(self.screen, pygame.Color(15, 15, 15), self.board_rect[1][1])
         for i, line in enumerate(board.square):
             for j, piece in enumerate(line):
-                print(piece)
                 if piece.img:
                     piece_img = pygame.image.load(piece.img)
-                    piece_img = pygame.transform.scale(piece_img, piece.size)
-                    self.screen.blit(piece_img, (73 * j, 73 * i))
+                    piece_img = pygame.transform.scale(
+                        piece_img, self.size_piece)
+                    piece_img_rect = piece_img.get_rect(
+                        center=self.lst_board_rect[i][j].center)
+                    self.screen.blit(piece_img, piece_img_rect)
         pygame.display.flip()
+
+    def get_position_board(self, mouse_position) -> tuple:
+        pos_y = mouse_position[0] // self.size_square
+        pos_x = mouse_position[1] // self.size_square
+        return (pos_x, pos_y)
+
+    def test(self, position, board):
+        self.blit_game(board)
+        pygame.draw.rect(self.screen, pygame.Color(15, 15, 15),
+                         self.lst_board_rect[position[0]][position[1]])
+        pygame.display.flip()
+        lst = board.square[0][1].move_possibility(position)
+        print(lst)
+        for t in lst:
+            pygame.draw.rect(self.screen, pygame.Color(105, 105, 105),
+                             self.lst_board_rect[t[0]][t[1]])
+        pygame.display.flip()
+
+        # pygame.draw.rect(self.screen, pygame.Color(15, 15, 15), self.lst_board_rect[1][1])
