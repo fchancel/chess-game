@@ -5,15 +5,10 @@ class Piece():
     def __init__(self, color="") -> None:
         self.color = color
         self.img = ''
+        self.name = 'EMPTY'
 
     def __str__(self) -> str:
-        return f"Empty"
-
-    def is_empty_square(self):
-        if self.__str__() == 'Empty':
-            return True
-        else:
-            return False
+        return self.name
 
 
 class Rook(Piece):
@@ -22,22 +17,48 @@ class Rook(Piece):
     def __init__(self, color) -> None:
         super().__init__(color)
         self.color = color
+        self.name = "ROOK"
         if color == 'white':
             self.img = config.WHITE_ROOK
         else:
             self.img = config.BLACK_ROOK
+        print(self.name)
 
     def __str__(self) -> str:
         return f"{self.color} Rook"
 
-    def move_possibility(self, position):
-        lst_position = []
+    def move_possibility(self, position, board):
+        lst_position_vertical = []
+        lst_position_horizontal = []
+        bool_vertical = True
+        bool_horizontal = True
+
         for i in range(0, 8):
-            if i != position[0]:
-                lst_position.append((i, position[1]))
-            if i != position[1]:
-                lst_position.append((position[0], i))
-        return lst_position
+            # VERTICAL MOVE POSSIBILITY
+            if bool_vertical and i != position[0]:
+                if not board.is_empty_square((i, position[1])):
+                    if i < position[0]:
+                        lst_position_vertical = []
+                    else:
+                        bool_vertical = False
+                    if board.get_color_pawn((i, position[1])) != self.color and not board.is_adv_king((i, position[1]), self.color):
+                        lst_position_vertical.append((i, position[1]))
+                else:
+                    lst_position_vertical.append((i, position[1]))
+
+            # HORIZONTAL MOVE POSSIBILITY
+            if bool_horizontal and i != position[1]:
+                if not board.is_empty_square((position[0], i)):
+                    if i < position[1]:
+                        lst_position_horizontal = []
+                    else:
+                        bool_horizontal = False
+                    if board.get_color_pawn((position[0], i)) != self.color and not board.is_adv_king((position[0], i), self.color):
+                        lst_position_horizontal.append((position[0], i))
+                else:
+                    lst_position_horizontal.append((position[0], i))
+
+        return lst_position_horizontal + lst_position_vertical
 
 
 class Knight(Piece):
@@ -46,6 +67,7 @@ class Knight(Piece):
     def __init__(self, color) -> None:
         super().__init__(color)
         self.color = color
+        self.name = "KNIGHT"
         if color == 'white':
             self.img = config.WHITE_KNIGHT
         else:
@@ -71,6 +93,7 @@ class Bishop(Piece):
     def __init__(self, color) -> None:
         super().__init__(color)
         self.color = color
+        self.name = "BISHOP"
         if color == 'white':
             self.img = config.WHITE_BISHOP
         else:
@@ -100,6 +123,7 @@ class Pawn(Piece):
         super().__init__(color)
         self.color = color
         self.first_move = False
+        self.name = "PAWN"
         if color == 'white':
             self.img = config.WHITE_PAWN
         else:
@@ -113,7 +137,8 @@ class Pawn(Piece):
             value = -1
         else:
             value = 1
-        lst_position = [(position[0] + value, position[1]), (position[0] + value , position[1] - 1), (position[0] + value , position[1] + 1)]
+        lst_position = [(position[0] + value, position[1]), (position[0] +
+                                                             value, position[1] - 1), (position[0] + value, position[1] + 1)]
         if self.first_move == False:
             lst_position.append((position[0] + value * 2, position[1]))
         return lst_position
@@ -128,6 +153,7 @@ class Queen(Piece):
     def __init__(self, color) -> None:
         super().__init__(color)
         self.color = color
+        self.name = "QUEEN"
         if color == 'white':
             self.img = config.WHITE_QUEEN
         else:
@@ -148,6 +174,7 @@ class King(Piece):
     def __init__(self, color) -> None:
         super().__init__(color)
         self.color = color
+        self.name = "KING"
         if color == 'white':
             self.img = config.WHITE_KING
         else:

@@ -53,7 +53,8 @@ class GraphEngine():
         pygame.draw.rect(self.screen, pygame.Color(15, 15, 15),
                          self.lst_board_rect[position[0]][position[1]])
         pygame.display.flip()
-        lst = board.square[6][1].move_possibility(position)
+        lst = board.square[0][0].move_possibility(position, board)
+
         print(f"Je suis sur la case : {board.square[position[0]][position[1]]}")
         print(lst)
         for t in lst:

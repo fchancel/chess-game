@@ -4,14 +4,29 @@ import config
 class Board():
 
     def __init__(self) -> None:
+        # self.square = [
+        #     [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
+        #      King('black'), Bishop('black'), Knight('black'), Rook('black')],
+        #     [Pawn('black')] * 8,
+
+        #     [Piece()] * 8,
+        #     [Piece()] * 8,
+        #     [Piece()] * 8,
+        #     [Piece()] * 8,
+
+        #     [Pawn('white')] * 8,
+        #     [Rook('white'), Knight('white'), Bishop('white'), Queen('white'),
+        #      King('white'), Bishop('white'), Knight('white'), Rook('white')],
+        # ]
+
         self.square = [
             [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
-             King('black'), Bishop('black'), Knight('black'), Rook('black')],
+             King('black'), Piece(), Knight('black'), Rook('black')],
             [Pawn('black')] * 8,
 
+            [Piece(), Pawn('black'), Piece(),Piece(),Piece(),Piece(),Piece(),Piece(),],
             [Piece()] * 8,
-            [Piece()] * 8,
-            [Piece()] * 8,
+            [Piece(), Piece(), Piece(), Knight('white'), Piece(),Piece(), Knight('white'), Knight('white'),],
             [Piece()] * 8,
 
             [Pawn('white')] * 8,
@@ -58,3 +73,16 @@ class Board():
             self.color_play = "black"
         else:
             self.color_play = "white"
+
+    def is_empty_square(self, position) -> bool:
+        if self.square[position[0]][position[1]].name != 'EMPTY':
+            return False
+        return True
+
+    def get_color_pawn(self, position):
+        return self.square[position[0]][position[1]].color
+
+    def is_adv_king(self, position, color_player):
+        if self.square[position[0]][position[1]].name == 'KING' and self.square[position[0]][position[1]].color != color_player:
+            return True
+        return False
