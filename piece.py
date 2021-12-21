@@ -7,7 +7,13 @@ class Piece():
         self.img = ''
 
     def __str__(self) -> str:
-        return f"Empty square"
+        return f"Empty"
+
+    def is_empty_square(self):
+        if self.__str__() == 'Empty':
+            return True
+        else:
+            return False
 
 
 class Rook(Piece):
@@ -93,6 +99,7 @@ class Pawn(Piece):
     def __init__(self, color) -> None:
         super().__init__(color)
         self.color = color
+        self.first_move = False
         if color == 'white':
             self.img = config.WHITE_PAWN
         else:
@@ -100,6 +107,19 @@ class Pawn(Piece):
 
     def __str__(self) -> str:
         return f"{self.color} Pawn"
+
+    def move_possibility(self, position):
+        if self.color == 'white':
+            value = -1
+        else:
+            value = 1
+        lst_position = [(position[0] + value, position[1]), (position[0] + value , position[1] - 1), (position[0] + value , position[1] + 1)]
+        if self.first_move == False:
+            lst_position.append((position[0] + value * 2, position[1]))
+        return lst_position
+
+    def change_first_move(self):
+        self.first_move = True
 
 
 class Queen(Piece):
@@ -121,6 +141,7 @@ class Queen(Piece):
         lst_position_bishop = (Bishop.move_possibility(None, position))
         return lst_position_rook + lst_position_bishop
 
+
 class King(Piece):
     value = 0
 
@@ -137,8 +158,10 @@ class King(Piece):
 
     def move_possibility(self, position):
         lst_position = []
-        lst_posibility = [(-1, -1), (-1, 0), (-1, 1), (1,0), (1, 1), (0,1), (1, -1), (0, -1)]
+        lst_posibility = [(-1, -1), (-1, 0), (-1, 1), (1, 0),
+                          (1, 1), (0, 1), (1, -1), (0, -1)]
         for pos in lst_posibility:
-            if (position[0] + pos[0] >= 0 and position[0] + pos[0] <= 7) and (position[1] + pos[1] >= 0 and position[1] + pos[1] <= 7): 
-                lst_position.append((position[0] + pos[0], position[1] + pos[1]))
+            if (position[0] + pos[0] >= 0 and position[0] + pos[0] <= 7) and (position[1] + pos[1] >= 0 and position[1] + pos[1] <= 7):
+                lst_position.append(
+                    (position[0] + pos[0], position[1] + pos[1]))
         return lst_position
