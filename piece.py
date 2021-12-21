@@ -49,11 +49,13 @@ class Knight(Piece):
         return f"{self.color} Knight"
 
     def move_possibility(self, position):
-        possibility = [(-2, -1), (-2, 1), (-1, -2), (1, -2), (2, -1), (2, 1), (-1, 2), (1, 2)]
+        possibility = [(-2, -1), (-2, 1), (-1, -2), (1, -2),
+                       (2, -1), (2, 1), (-1, 2), (1, 2)]
         lst_position = []
         for elt in possibility:
             if (position[0] + elt[0] >= 0 and position[0] + elt[0] <= 7) and (position[1] + elt[1] >= 0 and position[1] + elt[1] <= 7):
-                lst_position.append((position[0] + elt[0], position[1] + elt[1]))
+                lst_position.append(
+                    (position[0] + elt[0], position[1] + elt[1]))
         return lst_position
 
 
@@ -70,6 +72,19 @@ class Bishop(Piece):
 
     def __str__(self) -> str:
         return f"{self.color} Bishop"
+
+    def move_possibility(self, position):
+        lst_position = []
+        for i in range(1, 8):
+            if position[0] - i >= 0 and position[1] - i >= 0:
+                lst_position.append((position[0] - i, position[1] - i))
+            if position[0] + i <= 7 and position[1] + i <= 7:
+                lst_position.append((position[0] + i, position[1] + i))
+            if position[0] - i >= 0 and position[1] + i <= 7:
+                lst_position.append((position[0] - i, position[1] + i))
+            if position[0] + i <= 7 and position[1] - i >= 0:
+                lst_position.append((position[0] + i, position[1] - i))
+        return lst_position
 
 
 class Pawn(Piece):
@@ -101,6 +116,10 @@ class Queen(Piece):
     def __str__(self) -> str:
         return f"{self.color} Queen"
 
+    def move_possibility(self, position):
+        lst_position_rook = Rook.move_possibility(None, position)
+        lst_position_bishop = (Bishop.move_possibility(None, position))
+        return lst_position_rook + lst_position_bishop
 
 class King(Piece):
     value = 0
@@ -115,3 +134,11 @@ class King(Piece):
 
     def __str__(self) -> str:
         return f"{self.color} King"
+
+    def move_possibility(self, position):
+        lst_position = []
+        lst_posibility = [(-1, -1), (-1, 0), (-1, 1), (1,0), (1, 1), (0,1), (1, -1), (0, -1)]
+        for pos in lst_posibility:
+            if (position[0] + pos[0] >= 0 and position[0] + pos[0] <= 7) and (position[1] + pos[1] >= 0 and position[1] + pos[1] <= 7): 
+                lst_position.append((position[0] + pos[0], position[1] + pos[1]))
+        return lst_position
