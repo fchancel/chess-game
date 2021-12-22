@@ -27,7 +27,9 @@ class Rook(Piece):
     def __str__(self) -> str:
         return f"{self.color} Rook"
 
-    def move_possibility(self, position, board):
+    def move_possibility(self, position, board, color=None):
+        if color == None:
+            color = self.color
         lst_position_vertical = []
         lst_position_horizontal = []
         bool_vertical = True
@@ -41,7 +43,7 @@ class Rook(Piece):
                         lst_position_vertical = []
                     else:
                         bool_vertical = False
-                    if board.get_color_pawn((i, position[1])) != self.color and not board.is_adv_king((i, position[1]), self.color):
+                    if board.get_color_pawn((i, position[1])) != color and not board.is_adv_king((i, position[1]), color):
                         lst_position_vertical.append((i, position[1]))
                 else:
                     lst_position_vertical.append((i, position[1]))
@@ -53,7 +55,7 @@ class Rook(Piece):
                         lst_position_horizontal = []
                     else:
                         bool_horizontal = False
-                    if board.get_color_pawn((position[0], i)) != self.color and not board.is_adv_king((position[0], i), self.color):
+                    if board.get_color_pawn((position[0], i)) != color and not board.is_adv_king((position[0], i), color):
                         lst_position_horizontal.append((position[0], i))
                 else:
                     lst_position_horizontal.append((position[0], i))
@@ -102,7 +104,9 @@ class Bishop(Piece):
     def __str__(self) -> str:
         return f"{self.color} Bishop"
 
-    def move_possibility(self, position, board):
+    def move_possibility(self, position, board, color=None):
+        if color == None:
+            color = self.color
         lst_pos_to_r = []
         lst_pos_to_l = []
         bool_right = True
@@ -128,8 +132,8 @@ class Bishop(Piece):
                         lst_pos_to_r = []
                     else:
                         bool_right = False
-                    if (board.get_color_pawn((begin_to_r[0] + i, begin_to_r[1] + i)) != self.color and
-                            not board.is_adv_king((begin_to_r[0] + i, begin_to_r[1] + i), self.color)):
+                    if (board.get_color_pawn((begin_to_r[0] + i, begin_to_r[1] + i)) != color and
+                            not board.is_adv_king((begin_to_r[0] + i, begin_to_r[1] + i), color)):
                         lst_pos_to_r.append(
                             (begin_to_r[0] + i, begin_to_r[1] + i))
                 else:
@@ -143,8 +147,8 @@ class Bishop(Piece):
                         lst_pos_to_l = []
                     else:
                         bool_left = False
-                    if (board.get_color_pawn((begin_to_l[0] + i, begin_to_l[1] - i)) != self.color and
-                            not board.is_adv_king((begin_to_l[0] + i, begin_to_l[1] - i), self.color)):
+                    if (board.get_color_pawn((begin_to_l[0] + i, begin_to_l[1] - i)) != color and
+                            not board.is_adv_king((begin_to_l[0] + i, begin_to_l[1] - i), color)):
                         lst_pos_to_l.append(
                             (begin_to_l[0] + i, begin_to_l[1] - i))
                 else:
@@ -200,9 +204,9 @@ class Queen(Piece):
     def __str__(self) -> str:
         return f"{self.color} Queen"
 
-    def move_possibility(self, position):
-        lst_position_rook = Rook.move_possibility(None, position)
-        lst_position_bishop = (Bishop.move_possibility(None, position))
+    def move_possibility(self, position, board):
+        lst_position_rook = Rook.move_possibility(None, position, board,self.color)
+        lst_position_bishop = Bishop.move_possibility(None, position, board,self.color)
         return lst_position_rook + lst_position_bishop
 
 
