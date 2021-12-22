@@ -102,18 +102,56 @@ class Bishop(Piece):
     def __str__(self) -> str:
         return f"{self.color} Bishop"
 
-    def move_possibility(self, position):
-        lst_position = []
-        for i in range(1, 8):
-            if position[0] - i >= 0 and position[1] - i >= 0:
-                lst_position.append((position[0] - i, position[1] - i))
-            if position[0] + i <= 7 and position[1] + i <= 7:
-                lst_position.append((position[0] + i, position[1] + i))
-            if position[0] - i >= 0 and position[1] + i <= 7:
-                lst_position.append((position[0] - i, position[1] + i))
-            if position[0] + i <= 7 and position[1] - i >= 0:
-                lst_position.append((position[0] + i, position[1] - i))
-        return lst_position
+    def move_possibility(self, position, board):
+        lst_pos_to_r = []
+        lst_pos_to_l = []
+        bool_right = True
+        bool_left = True
+
+        begin_to_r = (position[0] - position[1])
+        if begin_to_r < 0:
+            begin_to_r = (0, abs(begin_to_r))
+        else:
+            begin_to_r = (begin_to_r, 0)
+
+        begin_to_l = ((position[0]) - (7 - position[1]))
+        if begin_to_l < 0:
+            begin_to_l = [0, 7 - abs(begin_to_l)]
+        else:
+            begin_to_l = [begin_to_l, 7]
+
+        for i in range(0, 8):
+            # TO RIGHT MOVE POSSIBILITY
+            if (bool_right and sum(position) != sum(begin_to_r) + (i * 2) and begin_to_r[0] + i <= 7 and begin_to_r[1] + i <= 7):
+                if not board.is_empty_square((begin_to_r[0] + i, begin_to_r[1] + i)):
+                    if (sum(begin_to_r) + (i*2)) < sum(position):
+                        lst_pos_to_r = []
+                    else:
+                        bool_right = False
+                    if (board.get_color_pawn((begin_to_r[0] + i, begin_to_r[1] + i)) != self.color and
+                            not board.is_adv_king((begin_to_r[0] + i, begin_to_r[1] + i), self.color)):
+                        lst_pos_to_r.append(
+                            (begin_to_r[0] + i, begin_to_r[1] + i))
+                else:
+                    lst_pos_to_r.append(
+                        (begin_to_r[0] + i, begin_to_r[1] + i))
+
+            # TO LEFT MOVE POSSIBILITY
+            if (bool_left and (begin_to_l[0] + i != position[0] and begin_to_l[1] - i != position[1]) and begin_to_l[0] + i <= 7 and begin_to_l[1] - i >= 0):
+                if not board.is_empty_square((begin_to_l[0] + i, begin_to_l[1] - i)):
+                    if begin_to_l[1] - i > position[1]:
+                        lst_pos_to_l = []
+                    else:
+                        bool_left = False
+                    if (board.get_color_pawn((begin_to_l[0] + i, begin_to_l[1] - i)) != self.color and
+                            not board.is_adv_king((begin_to_l[0] + i, begin_to_l[1] - i), self.color)):
+                        lst_pos_to_l.append(
+                            (begin_to_l[0] + i, begin_to_l[1] - i))
+                else:
+                    lst_pos_to_l.append(
+                        (begin_to_l[0] + i, begin_to_l[1] - i))
+
+        return lst_pos_to_r + lst_pos_to_l
 
 
 class Pawn(Piece):
