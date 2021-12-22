@@ -78,12 +78,16 @@ class Knight(Piece):
     def __str__(self) -> str:
         return f"{self.color} Knight"
 
-    def move_possibility(self, position):
+    def move_possibility(self, position, board, color=None):
+        if color == None:
+            color = self.color
         possibility = [(-2, -1), (-2, 1), (-1, -2), (1, -2),
                        (2, -1), (2, 1), (-1, 2), (1, 2)]
         lst_position = []
         for elt in possibility:
-            if (position[0] + elt[0] >= 0 and position[0] + elt[0] <= 7) and (position[1] + elt[1] >= 0 and position[1] + elt[1] <= 7):
+            if ((position[0] + elt[0] >= 0 and position[0] + elt[0] <= 7) and (position[1] + elt[1] >= 0 and position[1] + elt[1] <= 7) and
+                    board.get_color_pawn((position[0] + elt[0], position[1] + elt[1])) != color and
+                    not board.is_adv_king((position[0] + elt[0], position[1] + elt[1]), color)):
                 lst_position.append(
                     (position[0] + elt[0], position[1] + elt[1]))
         return lst_position
@@ -205,8 +209,10 @@ class Queen(Piece):
         return f"{self.color} Queen"
 
     def move_possibility(self, position, board):
-        lst_position_rook = Rook.move_possibility(None, position, board,self.color)
-        lst_position_bishop = Bishop.move_possibility(None, position, board,self.color)
+        lst_position_rook = Rook.move_possibility(
+            None, position, board, self.color)
+        lst_position_bishop = Bishop.move_possibility(
+            None, position, board, self.color)
         return lst_position_rook + lst_position_bishop
 
 
