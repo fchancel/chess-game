@@ -1,6 +1,7 @@
 from piece import Piece, Rook, Bishop, Knight, Pawn, King, Queen
 import config
 
+
 class Board():
 
     def __init__(self) -> None:
@@ -24,9 +25,11 @@ class Board():
              King('black'), Piece(), Knight('black'), Rook('black')],
             [Pawn('black')] * 8,
 
-            [Piece(), Pawn('black'), Piece(),Piece(),Piece(),Piece(),Piece(),Piece(),],
+            [Piece(), Pawn('black'), Piece(), Piece(),
+             Piece(), Piece(), Piece(), Piece(), ],
             [Piece()] * 8,
-            [Piece(), Piece(), Piece(), Knight('white'), Piece(),Piece(), Knight('white'), Knight('white'),],
+            [Piece(), Piece(), Piece(), Knight('white'), Piece(),
+             Piece(), Knight('white'), Knight('white'), ],
             [Piece()] * 8,
 
             [Pawn('white')] * 8,
@@ -86,3 +89,15 @@ class Board():
         if self.square[position[0]][position[1]].name == 'KING' and self.square[position[0]][position[1]].color != color_player:
             return True
         return False
+
+    def all_move_possibility(self, color, checkmate_move=False):
+        lst_position = []
+        for i, row in enumerate(self.square):
+            for j, piece in enumerate(row):
+                if piece.color == color and piece.name != "PAWN":
+                    lst_position += piece.move_possibility(
+                        (i, j), self, piece.color, checkmate_move)
+        return lst_position
+
+    def is_check_mat(self, color, lst_post):
+        pass
