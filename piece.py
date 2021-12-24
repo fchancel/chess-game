@@ -18,17 +18,16 @@ class Rook(Piece):
         super().__init__(color)
         self.color = color
         self.name = "ROOK"
-        first_move = True
+        self.first_move = True
         if color == 'white':
             self.img = config.WHITE_ROOK
         else:
             self.img = config.BLACK_ROOK
-        print(self.name)
 
     def __str__(self) -> str:
         return f"{self.color} Rook"
 
-    def move_possibility(self, position, board, color=None, checkmate_move=False):
+    def move_possibility(self, position, board, color=None, check_move=False):
         if color == None:
             color = self.color
         lst_position_vertical = []
@@ -44,7 +43,7 @@ class Rook(Piece):
                         lst_position_vertical = []
                     else:
                         bool_vertical = False
-                    if board.get_color_pawn((i, position[1])) != color or checkmate_move:
+                    if board.get_color_pawn((i, position[1])) != color or check_move:
                         lst_position_vertical.append((i, position[1]))
                 else:
                     lst_position_vertical.append((i, position[1]))
@@ -56,7 +55,7 @@ class Rook(Piece):
                         lst_position_horizontal = []
                     else:
                         bool_horizontal = False
-                    if board.get_color_pawn((position[0], i)) != color or checkmate_move:
+                    if board.get_color_pawn((position[0], i)) != color or check_move:
                         lst_position_horizontal.append((position[0], i))
                 else:
                     lst_position_horizontal.append((position[0], i))
@@ -79,7 +78,7 @@ class Knight(Piece):
     def __str__(self) -> str:
         return f"{self.color} Knight"
 
-    def move_possibility(self, position, board, color=None, checkmate_move=False):
+    def move_possibility(self, position, board, color=None, check_move=False):
         if color == None:
             color = self.color
         possibility = [(-2, -1), (-2, 1), (-1, -2), (1, -2),
@@ -87,7 +86,7 @@ class Knight(Piece):
         lst_position = []
         for elt in possibility:
             if (position[0] + elt[0] >= 0 and position[0] + elt[0] <= 7) and (position[1] + elt[1] >= 0 and position[1] + elt[1] <= 7):
-                if checkmate_move:
+                if check_move:
                     lst_position.append(
                         (position[0] + elt[0], position[1] + elt[1]))
                 elif board.get_color_pawn((position[0] + elt[0], position[1] + elt[1])) != color:
@@ -112,7 +111,7 @@ class Bishop(Piece):
     def __str__(self) -> str:
         return f"{self.color} Bishop"
 
-    def move_possibility(self, position, board, color=None, checkmate_move=False):
+    def move_possibility(self, position, board, color=None, check_move=False):
         if color == None:
             color = self.color
         lst_pos_to_r = []
@@ -140,7 +139,7 @@ class Bishop(Piece):
                         lst_pos_to_r = []
                     else:
                         bool_right = False
-                    if board.get_color_pawn((begin_to_r[0] + i, begin_to_r[1] + i)) != color or checkmate_move:
+                    if board.get_color_pawn((begin_to_r[0] + i, begin_to_r[1] + i)) != color or check_move:
                         lst_pos_to_r.append(
                             (begin_to_r[0] + i, begin_to_r[1] + i))
                 else:
@@ -154,7 +153,7 @@ class Bishop(Piece):
                         lst_pos_to_l = []
                     else:
                         bool_left = False
-                    if board.get_color_pawn((begin_to_l[0] + i, begin_to_l[1] - i)) != color or checkmate_move:
+                    if board.get_color_pawn((begin_to_l[0] + i, begin_to_l[1] - i)) != color or check_move:
                         lst_pos_to_l.append(
                             (begin_to_l[0] + i, begin_to_l[1] - i))
                 else:
@@ -179,13 +178,13 @@ class Queen(Piece):
     def __str__(self) -> str:
         return f"{self.color} Queen"
 
-    def move_possibility(self, position, board, color=None, checkmate_move=False):
+    def move_possibility(self, position, board, color=None, check_move=False):
         if color == None:
             color = self.color
         lst_position_rook = Rook.move_possibility(
-            None, position, board, color, checkmate_move)
+            None, position, board, color, check_move)
         lst_position_bishop = Bishop.move_possibility(
-            None, position, board, color, checkmate_move)
+            None, position, board, color, check_move)
         return lst_position_rook + lst_position_bishop
 
 
@@ -196,6 +195,7 @@ class King(Piece):
         super().__init__(color)
         self.color = color
         self.name = "KING"
+        self.first_move = True
         if color == 'white':
             self.img = config.WHITE_KING
         else:
@@ -204,7 +204,7 @@ class King(Piece):
     def __str__(self) -> str:
         return f"{self.color} King"
 
-    def move_possibility(self, position, board, color=None, checkmate_move=False):
+    def move_possibility(self, position, board, color=None, check_move=False, recursive_call=False):
         if color == None:
             color = self.color
         lst_position = []
@@ -212,22 +212,48 @@ class King(Piece):
                           (1, 1), (0, 1), (1, -1), (0, -1)]
         for pos in lst_posibility:
             if (position[0] + pos[0] >= 0 and position[0] + pos[0] <= 7) and (position[1] + pos[1] >= 0 and position[1] + pos[1] <= 7):
-                if checkmate_move:
+                if check_move:
                     lst_position.append(
                         (position[0] + pos[0], position[1] + pos[1]))
                 elif board.get_color_pawn((position[0] + pos[0], position[1] + pos[1])) != color:
                     lst_position.append(
                         (position[0] + pos[0], position[1] + pos[1]))
 
-        # CHECK IF MOVE IS POSSIBLE WITHOUT CHECKMATE
-        if board.color_play != color:
+
+
+        if recursive_call == False: 
+            print('here')
             adv_color = 'white' if color == "black" else "black"
-            all_pos_adv = board.all_move_possibility(adv_color, True)
+            pos_king = 0 if color == 'black' else 7
+            lst_all_possibility = board.all_move_possibility(adv_color, True)
             n_lst = []
             for pos in lst_position:
-                if not pos in all_pos_adv:
+                if not board.is_attacked(lst_all_possibility, pos):
                     n_lst.append(pos)
+            lst_position = n_lst
+
+            casteling_left = True
+            casteling_right = True
+            if self.first_move == True:
+                if (board.square[pos_king][0].name == 'ROOK' and board.square[pos_king][0].color == color and
+                        board.square[pos_king][0].first_move):
+                    for i in range(1, 4):
+                        if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked(lst_all_possibility, (pos_king, i)):
+                            casteling_left = False
+                    if casteling_left:
+                        n_lst.append((pos_king, 2))
+
+                if (board.square[pos_king][7].name == 'ROOK' and board.square[pos_king][7].color == color and
+                        board.square[pos_king][0].first_move):
+                    for i in range(5, 7):
+                        if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked(lst_all_possibility, (pos_king, i)):
+                            casteling_right = False
+                            print(i)
+                    if casteling_right:
+                        n_lst.append((pos_king, 6))
+
             return n_lst
+
         return lst_position
 
 

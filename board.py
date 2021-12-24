@@ -20,6 +20,22 @@ class Board():
         #      King('white'), Bishop('white'), Knight('white'), Rook('white')],
         # ]
 
+        # self.square = [
+        #     [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
+        #      King('black'), Piece(), Knight('black'), Rook('black')],
+        #     [Pawn('black')] * 8,
+
+        #     [Piece(), Pawn('black'), Piece(), Piece(),
+        #      Piece(), Piece(), Piece(), Piece(), ],
+        #     [Piece()] * 8,
+        #     [Piece(), Piece(), Piece(), Knight('white'), Piece(),
+        #      Piece(), Knight('white'), Knight('white'), ],
+        #     [Piece()] * 8,
+
+        #     [Pawn('white')] * 8,
+        #     [Rook('white'), Knight('white'), Bishop('white'), Queen('white'),
+        #      King('white'), Bishop('white'), Knight('white'), Rook('white')],
+        # ]
         self.square = [
             [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
              King('black'), Piece(), Knight('black'), Rook('black')],
@@ -28,13 +44,14 @@ class Board():
             [Piece(), Pawn('black'), Piece(), Piece(),
              Piece(), Piece(), Piece(), Piece(), ],
             [Piece()] * 8,
-            [Piece(), Piece(), Piece(), Knight('white'), Piece(),
-             Piece(), Knight('white'), Knight('white'), ],
+            
             [Piece()] * 8,
+            [Piece(), Piece(), Piece(), Knight('black'), Piece(),
+             Piece(), Knight('black'), Knight('white'), ],
 
             [Pawn('white')] * 8,
-            [Rook('white'), Knight('white'), Bishop('white'), Queen('white'),
-             King('white'), Bishop('white'), Knight('white'), Rook('white')],
+            [Rook('white'), Piece(), Piece(), Piece(),
+             King('white'), Piece(), Piece(), Rook('white')],
         ]
 
         self.coord = [
@@ -90,14 +107,20 @@ class Board():
             return True
         return False
 
-    def all_move_possibility(self, color, checkmate_move=False):
+    def all_move_possibility(self, color, check_move=False):
         lst_position = []
         for i, row in enumerate(self.square):
             for j, piece in enumerate(row):
-                if piece.color == color and piece.name != "PAWN":
+                if piece.name == 'KING' and piece.color == color:
                     lst_position += piece.move_possibility(
-                        (i, j), self, piece.color, checkmate_move)
+                        (i, j), self, piece.color, check_move, True)
+                elif piece.color == color and piece.name != "PAWN":
+                    lst_position += piece.move_possibility(
+                        (i, j), self, piece.color, check_move)
         return lst_position
 
-    def is_check_mat(self, color, lst_post):
-        pass
+    def is_attacked(self, lst_all_possibility, position):
+        for pos in lst_all_possibility:
+            if position in lst_all_possibility:
+                return True
+        return False
