@@ -53,9 +53,8 @@ class GraphEngine():
         pygame.draw.rect(self.screen, pygame.Color(15, 15, 15),
                          self.lst_board_rect[position[0]][position[1]])
         pygame.display.flip()
-        lst = board.square[7][4].move_possibility(position, board, check_move=False)
+        lst = board.square[6][4].move_possibility(position, board, check_move=False)
         # lst = board.all_move_possibility('black', True)
-        print(lst)
         for t in lst:
             pygame.draw.rect(self.screen, pygame.Color(105, 105, 105),
                              self.lst_board_rect[t[0]][t[1]])

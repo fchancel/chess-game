@@ -219,9 +219,7 @@ class King(Piece):
                     lst_position.append(
                         (position[0] + pos[0], position[1] + pos[1]))
 
-
-
-        if recursive_call == False: 
+        if recursive_call == False:
             print('here')
             adv_color = 'white' if color == "black" else "black"
             pos_king = 0 if color == 'black' else 7
@@ -273,18 +271,43 @@ class Pawn(Piece):
     def __str__(self) -> str:
         return f"{self.color} Pawn"
 
-    def move_possibility(self, position, board, color=None):
+    def move_possibility(self, position, board, color=None, check_move=False):
         if color == None:
             color = self.color
-        if self.color == 'white':
+        if color == 'white':
+            base_position = 6
             value = -1
+            en_passant = 3
         else:
+            base_position = 1
             value = 1
-        lst_position = [(position[0] + value, position[1]), (position[0] +
-                                                             value, position[1] - 1), (position[0] + value, position[1] + 1)]
-        if self.first_move == False:
-            lst_position.append((position[0] + value * 2, position[1]))
-        return lst_position
+            en_passant = 4
 
-    def change_first_move(self):
-        self.first_move = True
+        position_attack = [(position[0] + value, position[1] - 1),
+                           (position[0] + value, position[1] + 1)]
+        position_en_passant = [(position[0], position[1] - 1),
+                               (position[0], position[1] + 1)]
+
+        lst_position = []
+        if not check_move:
+            if position[0] + value <= 7 and position[0] > 0 and board.is_empty_square((position[0] + value, position[1])):
+                lst_position.append((position[0] + value, position[1]))
+                if position[0] == base_position and board.is_empty_square((position[0] + value * 2, position[1])):
+                    lst_position.append((position[0] + value * 2, position[1]))
+
+            for pos in position_attack:
+                print(pos)
+                if (pos[0] <= 7 and pos[0] >= 0 and pos[1] <= 7 and pos[1] >= 0 and not board.is_empty_square(pos) and
+                        board.get_color_pawn(pos) != color):
+                    lst_position.append(pos)
+
+            for pos in position_en_passant:
+                if (pos[0] <= 7 and pos[0] >= 0 and pos[1] <= 7 and pos[1] >= 0 and not board.is_empty_square(pos) and
+                        board.get_color_pawn(pos) != color and board.square[pos[0]][pos[1]].name == "PAWN" and board.square[pos[0]][pos[1]].first_move):
+                        lst_position.append((pos[0] + value, pos[1]))
+
+        else:
+            for pos in position_attack:
+                if pos[0] + value <= 7 and pos[0] > 0 and pos[1] <= 7 and pos[1] >= 0:
+                    lst_position.append(pos)
+        return lst_position

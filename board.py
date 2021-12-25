@@ -41,12 +41,14 @@ class Board():
              King('black'), Piece(), Knight('black'), Rook('black')],
             [Pawn('black')] * 8,
 
+            [Piece(), Piece(), Piece(), Piece(),
+             Piece(), Piece(), Piece(), Piece(), ],
+
             [Piece(), Pawn('black'), Piece(), Piece(),
              Piece(), Piece(), Piece(), Piece(), ],
-            [Piece()] * 8,
             
             [Piece()] * 8,
-            [Piece(), Piece(), Piece(), Knight('black'), Piece(),
+            [Piece(), Piece(), Pawn('white'), Knight('black'), Piece(),
              Piece(), Knight('black'), Knight('white'), ],
 
             [Pawn('white')] * 8,
@@ -102,11 +104,6 @@ class Board():
     def get_color_pawn(self, position):
         return self.square[position[0]][position[1]].color
 
-    def is_adv_king(self, position, color_player):
-        if self.square[position[0]][position[1]].name == 'KING' and self.square[position[0]][position[1]].color != color_player:
-            return True
-        return False
-
     def all_move_possibility(self, color, check_move=False):
         lst_position = []
         for i, row in enumerate(self.square):
@@ -114,7 +111,7 @@ class Board():
                 if piece.name == 'KING' and piece.color == color:
                     lst_position += piece.move_possibility(
                         (i, j), self, piece.color, check_move, True)
-                elif piece.color == color and piece.name != "PAWN":
+                elif piece.color == color:
                     lst_position += piece.move_possibility(
                         (i, j), self, piece.color, check_move)
         return lst_position
