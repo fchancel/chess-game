@@ -1,8 +1,18 @@
+
 import config
 
 
 class Piece():
-    def __init__(self, position="", color="", name='EMPTY') -> None:
+    def __init__(self, position: tuple = (), color: str = "", name: str = 'EMPTY') -> None:
+        """
+        Initializes a piece of the chess game.
+        If the keyword name is EMPTY, then the square is empty
+
+        Keyword arguments:
+        position -- position where the piece is located
+        color -- color of the piece
+        name -- name of the piece
+        """
         self.color = color
         self.img = ''
         self.name = name
@@ -12,14 +22,20 @@ class Piece():
     def __str__(self) -> str:
         return self.name
 
-    def move(self, board, new_position, move_possibility):
+    def move(self, board, new_position: tuple(), move_possibility: list()) -> None:
+        """
+        Move a piece on the board
+
+        keyword arguments:
+        board -- instance of class Board
+        new_position -- new position on the board for the piece
+        move_possibility -- list of possible positions for the piece
+        """
         if new_position in move_possibility:
             board.square[new_position[0]][new_position[1]
                                           ] = board.square[self.position[0]][self.position[1]]
             board.square[self.position[0]][self.position[1]] = Piece()
             self.position = new_position
-            return True
-        return False
 
 
 class Rook(Piece):
@@ -36,7 +52,16 @@ class Rook(Piece):
     def __str__(self) -> str:
         return f"{self.color} Rook"
 
-    def move_possibility(self, position, board, color=None, check_move=False):
+    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False) -> list():
+        """
+        Created a list of allowed positions for the Piece
+
+        keyword arguments:
+        position -- position of the part
+        board -- instance of the Board class
+        color -- color of the piece
+        check_move -- option to also check for forbidden moves for the opponent king
+        """
         if color == None:
             color = self.color
         lst_position_vertical = []
@@ -45,7 +70,6 @@ class Rook(Piece):
         bool_horizontal = True
 
         for i in range(0, 8):
-            # VERTICAL MOVE POSSIBILITY
             if bool_vertical and i != position[0]:
                 if not board.is_empty_square((i, position[1])):
                     if i < position[0]:
@@ -57,7 +81,6 @@ class Rook(Piece):
                 else:
                     lst_position_vertical.append((i, position[1]))
 
-            # HORIZONTAL MOVE POSSIBILITY
             if bool_horizontal and i != position[1]:
                 if not board.is_empty_square((position[0], i)):
                     if i < position[1]:
@@ -71,7 +94,15 @@ class Rook(Piece):
 
         return lst_position_horizontal + lst_position_vertical
 
-    def move(self, board, new_position, move_possibility):
+    def move(self, board, new_position: tuple(), move_possibility: list()) -> None:
+        """
+        Move a piece on the board
+
+        keyword arguments:
+        board -- instance of class Board
+        new_position -- new position on the board for the piece
+        move_possibility -- list of possible positions for the piece
+        """
         super().move(board, new_position, move_possibility)
         if self.first_move:
             self.first_move = False
@@ -90,7 +121,16 @@ class Knight(Piece):
     def __str__(self) -> str:
         return f"{self.color} Knight"
 
-    def move_possibility(self, position, board, color=None, check_move=False):
+    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False) -> list():
+        """
+        Created a list of allowed positions for the Piece
+
+        keyword arguments:
+        position -- position of the part
+        board -- instance of the Board class
+        color -- color of the piece
+        check_move -- option to also check for forbidden moves for the opponent king
+        """
         if color == None:
             color = self.color
         possibility = [(-2, -1), (-2, 1), (-1, -2), (1, -2),
@@ -121,7 +161,17 @@ class Bishop(Piece):
     def __str__(self) -> str:
         return f"{self.color} Bishop"
 
-    def move_possibility(self, position, board, color=None, check_move=False):
+    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False) -> list():
+        """
+        Created a list of allowed positions for the Piece
+
+        keyword arguments:
+        position -- position of the part
+        board -- instance of the Board class
+        color -- color of the piece
+        check_move -- option to also check for forbidden moves for the opponent king
+        """
+
         if color == None:
             color = self.color
         lst_pos_to_r = []
@@ -129,12 +179,14 @@ class Bishop(Piece):
         bool_right = True
         bool_left = True
 
+        # SEARCH FOR THE LOWER RIGHT SQUARE WHERE THE BISHOP COULD START
         begin_to_r = (position[0] - position[1])
         if begin_to_r < 0:
             begin_to_r = (0, abs(begin_to_r))
         else:
             begin_to_r = (begin_to_r, 0)
 
+        # SEARCH FOR THE LOWER LEFT SQUARE WHERE THE BISHOP COULD START
         begin_to_l = ((position[0]) - (7 - position[1]))
         if begin_to_l < 0:
             begin_to_l = [0, 7 - abs(begin_to_l)]
@@ -142,9 +194,9 @@ class Bishop(Piece):
             begin_to_l = [begin_to_l, 7]
 
         for i in range(0, 8):
-            # TO RIGHT MOVE POSSIBILITY
             if (bool_right and sum(position) != sum(begin_to_r) + (i * 2) and begin_to_r[0] + i <= 7 and begin_to_r[1] + i <= 7):
                 if not board.is_empty_square((begin_to_r[0] + i, begin_to_r[1] + i)):
+                    # CHECK IF THE CHECKED SQUARE IS BEFORE THE ORIGINAL POSITION OF THE BISHOP
                     if (sum(begin_to_r) + (i*2)) < sum(position):
                         lst_pos_to_r = []
                     else:
@@ -156,9 +208,9 @@ class Bishop(Piece):
                     lst_pos_to_r.append(
                         (begin_to_r[0] + i, begin_to_r[1] + i))
 
-            # TO LEFT MOVE POSSIBILITY
             if (bool_left and (begin_to_l[0] + i != position[0] and begin_to_l[1] - i != position[1]) and begin_to_l[0] + i <= 7 and begin_to_l[1] - i >= 0):
                 if not board.is_empty_square((begin_to_l[0] + i, begin_to_l[1] - i)):
+                    # CHECK IF THE CHECKED SQUARE IS BEFORE THE ORIGINAL POSITION OF THE BISHOP
                     if begin_to_l[1] - i > position[1]:
                         lst_pos_to_l = []
                     else:
@@ -186,7 +238,16 @@ class Queen(Piece):
     def __str__(self) -> str:
         return f"{self.color} Queen"
 
-    def move_possibility(self, position, board, color=None, check_move=False):
+    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False) -> list():
+        """
+        Created a list of allowed positions for the Piece
+
+        keyword arguments:
+        position -- position of the part
+        board -- instance of the Board class
+        color -- color of the piece
+        check_move -- option to also check for forbidden moves for the opponent king
+        """
         if color == None:
             color = self.color
         lst_position_rook = Rook.move_possibility(
@@ -210,12 +271,25 @@ class King(Piece):
     def __str__(self) -> str:
         return f"{self.color} King"
 
-    def move_possibility(self, position, board, color=None, check_move=False, recursive_call=False):
+    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False, recursive_call: bool = False) -> list():
+        """
+        Created a list of allowed positions for the Piece
+
+        keyword arguments:
+        position -- position of the part
+        board -- instance of the Board class
+        color -- color of the piece
+        check_move -- option to also check for forbidden moves for the opponent king
+        recursive_call -- Option to avoid infinite recursion when this method is called from board.all_move_possibility
+        """
+
         if color == None:
             color = self.color
         lst_position = []
         lst_posibility = [(-1, -1), (-1, 0), (-1, 1), (1, 0),
                           (1, 1), (0, 1), (1, -1), (0, -1)]
+
+        # MAKE ALL MOVE POSSIBILITY
         for pos in lst_posibility:
             if (position[0] + pos[0] >= 0 and position[0] + pos[0] <= 7) and (position[1] + pos[1] >= 0 and position[1] + pos[1] <= 7):
                 if check_move:
@@ -226,9 +300,10 @@ class King(Piece):
                         (position[0] + pos[0], position[1] + pos[1]))
 
         if recursive_call == False:
-            adv_color = 'white' if color == "black" else "black"
+            # SORTS IN THE LIST OF POSSIBILITY OF MOVEMENT OF THE KING, WHICH SQUARE ARE NOT ACCESSIBLE BECAUSE WOULD PUT THE RO IN FAILUR
             pos_king = 0 if color == 'black' else 7
-            lst_all_possibility = board.all_move_possibility(adv_color, True)
+            lst_all_possibility = board.all_move_possibility(
+                board.color_adv(), True)
             n_lst = []
             for pos in lst_position:
                 if not board.is_attacked(lst_all_possibility, pos):
@@ -237,6 +312,7 @@ class King(Piece):
 
             casteling_left = True
             casteling_right = True
+            # MANAGE IF CASTELING IS POSSIBLE
             if self.first_move == True:
                 if (board.square[pos_king][0].name == 'ROOK' and board.square[pos_king][0].color == color and
                         board.square[pos_king][0].first_move and board.square[pos_king][0].first_move):
@@ -258,7 +334,15 @@ class King(Piece):
 
         return lst_position
 
-    def move(self, board, new_position, move_possibility):
+    def move(self, board, new_position: tuple(), move_possibility: list()) -> None:
+        """
+        Move a piece on the board
+
+        keyword arguments:
+        board -- instance of class Board
+        new_position -- new position on the board for the piece
+        move_possibility -- list of possible positions for the piece
+        """
         super().move(board, new_position, move_possibility)
         if self.first_move:
             self.first_move = False
@@ -278,7 +362,17 @@ class Pawn(Piece):
     def __str__(self) -> str:
         return f"{self.color} Pawn"
 
-    def move_possibility(self, position, board, color=None, check_move=False):
+    def move_possibility(self, position: tuple(), board, color: str = None, check_move: str = False) -> list():
+        """
+        Created a list of allowed positions for the Piece
+
+        keyword arguments:
+        position -- position of the part
+        board -- instance of the Board class
+        color -- color of the piece
+        check_move -- option to also check for forbidden moves for the opponent king
+        """
+        
         if color == None:
             color = self.color
         if color == 'white':
