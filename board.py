@@ -5,20 +5,20 @@ import config
 class Board():
 
     def __init__(self) -> None:
-        # self.square = [
-        #     [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
-        #      King('black'), Bishop('black'), Knight('black'), Rook('black')],
-        #     [Pawn('black')] * 8,
+        self.square = [
+            [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
+             King('black'), Bishop('black'), Knight('black'), Rook('black')],
+            [Pawn('black')] * 8,
 
-        #     [Piece()] * 8,
-        #     [Piece()] * 8,
-        #     [Piece()] * 8,
-        #     [Piece()] * 8,
+            [Piece()] * 8,
+            [Piece()] * 8,
+            [Piece()] * 8,
+            [Piece()] * 8,
 
-        #     [Pawn('white')] * 8,
-        #     [Rook('white'), Knight('white'), Bishop('white'), Queen('white'),
-        #      King('white'), Bishop('white'), Knight('white'), Rook('white')],
-        # ]
+            [Pawn('white')] * 8,
+            [Rook('white'), Knight('white'), Bishop('white'), Queen('white'),
+             King('white'), Bishop('white'), Knight('white'), Rook('white')],
+        ]
 
         # self.square = [
         #     [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
@@ -36,25 +36,25 @@ class Board():
         #     [Rook('white'), Knight('white'), Bishop('white'), Queen('white'),
         #      King('white'), Bishop('white'), Knight('white'), Rook('white')],
         # ]
-        self.square = [
-            [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
-             King('black'), Piece(), Knight('black'), Rook('black')],
-            [Pawn('black')] * 8,
+        # self.square = [
+        #     [Rook('black'), Knight('black'), Bishop('black'), Queen('black'),
+        #      King('black'), Piece(), Knight('black'), Rook('black')],
+        #     [Pawn('black')] * 8,
 
-            [Piece(), Piece(), Piece(), Piece(),
-             Piece(), Piece(), Piece(), Piece(), ],
+        #     [Piece(), Piece(), Piece(), Piece(),
+        #      Piece(), Piece(), Piece(), Piece(), ],
 
-            [Piece(), Pawn('black'), Piece(), Piece(),
-             Piece(), Piece(), Piece(), Piece(), ],
+        #     [Piece(), Pawn('black'), Piece(), Piece(),
+        #      Piece(), Piece(), Piece(), Piece(), ],
             
-            [Piece()] * 8,
-            [Piece(), Piece(), Pawn('white'), Knight('black'), Piece(),
-             Piece(), Knight('black'), Knight('white'), ],
+        #     [Piece()] * 8,
+        #     [Piece(), Piece(), Pawn('white'), Knight('black'), Piece(),
+        #      Piece(), Knight('black'), Knight('white'), ],
 
-            [Pawn('white')] * 8,
-            [Rook('white'), Piece(), Piece(), Piece(),
-             King('white'), Piece(), Piece(), Rook('white')],
-        ]
+        #     [Pawn('white')] * 8,
+        #     [Rook('white'), Piece(), Piece(), Piece(),
+        #      King('white'), Piece(), Piece(), Rook('white')],
+        # ]
 
         self.coord = [
             ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'],
@@ -121,3 +121,14 @@ class Board():
             if position in lst_all_possibility:
                 return True
         return False
+
+    def all_deselect_piece(self):
+        for row in self.square:
+            for piece in row:
+                piece.selected = False
+
+    def piece_selected(self):
+        for row in self.square:
+            for piece in row:
+                if piece.selected:
+                    return piece

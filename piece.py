@@ -6,9 +6,17 @@ class Piece():
         self.color = color
         self.img = ''
         self.name = 'EMPTY'
+        self.selected = False
 
     def __str__(self) -> str:
         return self.name
+
+    def move(self, board, old_position, new_position, move_possibility):
+        if new_position in move_possibility:
+            board.square[new_position[0]][new_position[1]] = board.square[old_position[0]][old_position[1]]
+            board.square[old_position[0]][old_position[1]] = Piece()
+            return True
+        return False
 
 
 class Rook(Piece):
@@ -304,7 +312,7 @@ class Pawn(Piece):
             for pos in position_en_passant:
                 if (pos[0] <= 7 and pos[0] >= 0 and pos[1] <= 7 and pos[1] >= 0 and not board.is_empty_square(pos) and
                         board.get_color_pawn(pos) != color and board.square[pos[0]][pos[1]].name == "PAWN" and board.square[pos[0]][pos[1]].first_move):
-                        lst_position.append((pos[0] + value, pos[1]))
+                    lst_position.append((pos[0] + value, pos[1]))
 
         else:
             for pos in position_attack:

@@ -30,8 +30,10 @@ class GraphEngine():
         board_img = pygame.image.load(config.BOARD)
         return pygame.transform.scale(board_img, self.size_board)
 
-    def blit_game(self, board):
-        self.screen.blit(self.board_img, self.position_board)
+    def flip(self):
+        pygame.display.flip()
+
+    def blit_pieces(self, board):
         for i, line in enumerate(board.square):
             for j, piece in enumerate(line):
                 if piece.img:
@@ -41,23 +43,21 @@ class GraphEngine():
                     piece_img_rect = piece_img.get_rect(
                         center=self.lst_board_rect[i][j].center)
                     self.screen.blit(piece_img, piece_img_rect)
-        pygame.display.flip()
+
+    def blit_board(self, board):
+        self.screen.blit(self.board_img, self.position_board)
 
     def get_position_board(self, mouse_position) -> tuple:
         pos_y = mouse_position[0] // self.size_square
         pos_x = mouse_position[1] // self.size_square
         return (pos_x, pos_y)
 
-    def test(self, position, board):
-        self.blit_game(board)
+    def blit_select_piece(self, position):
         pygame.draw.rect(self.screen, pygame.Color(15, 15, 15),
                          self.lst_board_rect[position[0]][position[1]])
-        pygame.display.flip()
-        lst = board.square[6][4].move_possibility(position, board, check_move=False)
-        # lst = board.all_move_possibility('black', True)
-        for t in lst:
-            pygame.draw.rect(self.screen, pygame.Color(105, 105, 105),
-                             self.lst_board_rect[t[0]][t[1]])
-        pygame.display.flip()
 
-        # pygame.draw.rect(self.screen, pygame.Color(15, 15, 15), self.lst_board_rect[1][1])
+    def blit_move_possibility(self, move_possibility, board):
+        for pos in move_possibility:
+            pygame.draw.rect(self.screen, pygame.Color(config.COLOR_MOVE_POSSIBILITY),
+                             self.lst_board_rect[pos[0]][pos[1]])
+        self.blit_pieces(board)

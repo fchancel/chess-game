@@ -3,11 +3,11 @@
 # =========================================
 
 PROGRAM_NAME = "CHESS GAME"
+FPS = 10
 
 
 # =========================================
 #               IMAGE
-# REQUIRED: images size for buttons : 32X32
 # =========================================
 
 BOARD = 'asset/board.png'
@@ -29,3 +29,9 @@ BLACK_QUEEN = 'asset/chess-queen-black.png'
 
 WHITE_KING = 'asset/chess-king-white.png'
 BLACK_KING = 'asset/chess-king-black.png'
+
+# =========================================
+#               COLOR
+# =========================================
+
+COLOR_MOVE_POSSIBILITY = ((200, 200, 210))
