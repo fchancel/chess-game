@@ -2,19 +2,22 @@ import config
 
 
 class Piece():
-    def __init__(self, color="") -> None:
+    def __init__(self, position="", color="", name='EMPTY') -> None:
         self.color = color
         self.img = ''
-        self.name = 'EMPTY'
+        self.name = name
         self.selected = False
+        self.position = position
 
     def __str__(self) -> str:
         return self.name
 
-    def move(self, board, old_position, new_position, move_possibility):
+    def move(self, board, new_position, move_possibility):
         if new_position in move_possibility:
-            board.square[new_position[0]][new_position[1]] = board.square[old_position[0]][old_position[1]]
-            board.square[old_position[0]][old_position[1]] = Piece()
+            board.square[new_position[0]][new_position[1]
+                                          ] = board.square[self.position[0]][self.position[1]]
+            board.square[self.position[0]][self.position[1]] = Piece()
+            self.position = new_position
             return True
         return False
 
@@ -22,10 +25,8 @@ class Piece():
 class Rook(Piece):
     value = 5
 
-    def __init__(self, color) -> None:
-        super().__init__(color)
-        self.color = color
-        self.name = "ROOK"
+    def __init__(self, position, color) -> None:
+        super().__init__(position, color, "ROOK")
         self.first_move = True
         if color == 'white':
             self.img = config.WHITE_ROOK
@@ -70,14 +71,17 @@ class Rook(Piece):
 
         return lst_position_horizontal + lst_position_vertical
 
+    def move(self, board, new_position, move_possibility):
+        super().move(board, new_position, move_possibility)
+        if self.first_move:
+            self.first_move = False
+
 
 class Knight(Piece):
     value = 3
 
-    def __init__(self, color) -> None:
-        super().__init__(color)
-        self.color = color
-        self.name = "KNIGHT"
+    def __init__(self, position, color) -> None:
+        super().__init__(position, color, 'KNIGHT')
         if color == 'white':
             self.img = config.WHITE_KNIGHT
         else:
@@ -107,10 +111,8 @@ class Knight(Piece):
 class Bishop(Piece):
     value = 3
 
-    def __init__(self, color) -> None:
-        super().__init__(color)
-        self.color = color
-        self.name = "BISHOP"
+    def __init__(self, position, color) -> None:
+        super().__init__(position, color, 'BISHOP')
         if color == 'white':
             self.img = config.WHITE_BISHOP
         else:
@@ -174,10 +176,8 @@ class Bishop(Piece):
 class Queen(Piece):
     value = 9
 
-    def __init__(self, color) -> None:
-        super().__init__(color)
-        self.color = color
-        self.name = "QUEEN"
+    def __init__(self, position, color) -> None:
+        super().__init__(position, color, 'QUEEN')
         if color == 'white':
             self.img = config.WHITE_QUEEN
         else:
@@ -199,10 +199,8 @@ class Queen(Piece):
 class King(Piece):
     value = 0
 
-    def __init__(self, color) -> None:
-        super().__init__(color)
-        self.color = color
-        self.name = "KING"
+    def __init__(self, position, color) -> None:
+        super().__init__(position, color, "KING")
         self.first_move = True
         if color == 'white':
             self.img = config.WHITE_KING
@@ -228,7 +226,6 @@ class King(Piece):
                         (position[0] + pos[0], position[1] + pos[1]))
 
         if recursive_call == False:
-            print('here')
             adv_color = 'white' if color == "black" else "black"
             pos_king = 0 if color == 'black' else 7
             lst_all_possibility = board.all_move_possibility(adv_color, True)
@@ -242,7 +239,7 @@ class King(Piece):
             casteling_right = True
             if self.first_move == True:
                 if (board.square[pos_king][0].name == 'ROOK' and board.square[pos_king][0].color == color and
-                        board.square[pos_king][0].first_move):
+                        board.square[pos_king][0].first_move and board.square[pos_king][0].first_move):
                     for i in range(1, 4):
                         if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked(lst_all_possibility, (pos_king, i)):
                             casteling_left = False
@@ -250,11 +247,10 @@ class King(Piece):
                         n_lst.append((pos_king, 2))
 
                 if (board.square[pos_king][7].name == 'ROOK' and board.square[pos_king][7].color == color and
-                        board.square[pos_king][0].first_move):
+                        board.square[pos_king][7].first_move and board.square[pos_king][7].first_move):
                     for i in range(5, 7):
                         if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked(lst_all_possibility, (pos_king, i)):
                             casteling_right = False
-                            print(i)
                     if casteling_right:
                         n_lst.append((pos_king, 6))
 
@@ -262,15 +258,18 @@ class King(Piece):
 
         return lst_position
 
+    def move(self, board, new_position, move_possibility):
+        super().move(board, new_position, move_possibility)
+        if self.first_move:
+            self.first_move = False
+
 
 class Pawn(Piece):
     value = 1
 
-    def __init__(self, color) -> None:
-        super().__init__(color)
-        self.color = color
+    def __init__(self, position, color) -> None:
+        super().__init__(position, color, 'PAWN')
         self.first_move = False
-        self.name = "PAWN"
         if color == 'white':
             self.img = config.WHITE_PAWN
         else:
@@ -304,7 +303,6 @@ class Pawn(Piece):
                     lst_position.append((position[0] + value * 2, position[1]))
 
             for pos in position_attack:
-                print(pos)
                 if (pos[0] <= 7 and pos[0] >= 0 and pos[1] <= 7 and pos[1] >= 0 and not board.is_empty_square(pos) and
                         board.get_color_pawn(pos) != color):
                     lst_position.append(pos)

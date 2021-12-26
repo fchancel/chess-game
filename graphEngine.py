@@ -43,8 +43,9 @@ class GraphEngine():
                     piece_img_rect = piece_img.get_rect(
                         center=self.lst_board_rect[i][j].center)
                     self.screen.blit(piece_img, piece_img_rect)
+                    
 
-    def blit_board(self, board):
+    def blit_board(self):
         self.screen.blit(self.board_img, self.position_board)
 
     def get_position_board(self, mouse_position) -> tuple:
@@ -60,4 +61,5 @@ class GraphEngine():
         for pos in move_possibility:
             pygame.draw.rect(self.screen, pygame.Color(config.COLOR_MOVE_POSSIBILITY),
                              self.lst_board_rect[pos[0]][pos[1]])
+        
         self.blit_pieces(board)
