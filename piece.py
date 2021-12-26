@@ -22,7 +22,7 @@ class Piece():
     def __str__(self) -> str:
         return self.name
 
-    def move(self, board, new_position: tuple(), move_possibility: list()) -> None:
+    def move(self, board, new_position: tuple, move_possibility: list) -> None:
         """
         Move a piece on the board
 
@@ -52,16 +52,20 @@ class Rook(Piece):
     def __str__(self) -> str:
         return f"{self.color} Rook"
 
-    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False) -> list():
+    def move_possibility(self, board, position: tuple = (), color: str = None, check_move: bool = False) -> list:
         """
         Created a list of allowed positions for the Piece
 
         keyword arguments:
-        position -- position of the part
+        position -- position of the piece
         board -- instance of the Board class
         color -- color of the piece
         check_move -- option to also check for forbidden moves for the opponent king
         """
+        print(len(position))
+        print(position)
+        if len(position) == 0:
+            position = self.position
         if color == None:
             color = self.color
         lst_position_vertical = []
@@ -94,7 +98,7 @@ class Rook(Piece):
 
         return lst_position_horizontal + lst_position_vertical
 
-    def move(self, board, new_position: tuple(), move_possibility: list()) -> None:
+    def move(self, board, new_position: tuple, move_possibility: list) -> None:
         """
         Move a piece on the board
 
@@ -121,16 +125,19 @@ class Knight(Piece):
     def __str__(self) -> str:
         return f"{self.color} Knight"
 
-    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False) -> list():
+    def move_possibility(self,  board, position: tuple = (), color: str = None, check_move: bool = False) -> list:
         """
         Created a list of allowed positions for the Piece
 
         keyword arguments:
-        position -- position of the part
+        position -- position of the piece
         board -- instance of the Board class
         color -- color of the piece
         check_move -- option to also check for forbidden moves for the opponent king
         """
+
+        if len(position) == 0:
+            position = self.position
         if color == None:
             color = self.color
         possibility = [(-2, -1), (-2, 1), (-1, -2), (1, -2),
@@ -161,17 +168,19 @@ class Bishop(Piece):
     def __str__(self) -> str:
         return f"{self.color} Bishop"
 
-    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False) -> list():
+    def move_possibility(self, board, position: tuple = (), color: str = None, check_move: bool = False) -> list:
         """
         Created a list of allowed positions for the Piece
 
         keyword arguments:
-        position -- position of the part
+        position -- position of the piece
         board -- instance of the Board class
         color -- color of the piece
         check_move -- option to also check for forbidden moves for the opponent king
         """
 
+        if len(position) == 0:
+            position = self.position
         if color == None:
             color = self.color
         lst_pos_to_r = []
@@ -238,22 +247,25 @@ class Queen(Piece):
     def __str__(self) -> str:
         return f"{self.color} Queen"
 
-    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False) -> list():
+    def move_possibility(self, board, position: tuple = (), color: str = None, check_move: bool = False) -> list:
         """
         Created a list of allowed positions for the Piece
 
         keyword arguments:
-        position -- position of the part
+        position -- position of the Piece
         board -- instance of the Board class
         color -- color of the piece
         check_move -- option to also check for forbidden moves for the opponent king
         """
+        if len(position) == 0:
+            position = self.position
+
         if color == None:
             color = self.color
         lst_position_rook = Rook.move_possibility(
-            None, position, board, color, check_move)
+            None, board, self.position, color, check_move)
         lst_position_bishop = Bishop.move_possibility(
-            None, position, board, color, check_move)
+            None, board, self.position, color, check_move)
         return lst_position_rook + lst_position_bishop
 
 
@@ -271,18 +283,20 @@ class King(Piece):
     def __str__(self) -> str:
         return f"{self.color} King"
 
-    def move_possibility(self, position: tuple(), board, color: str = None, check_move: bool = False, recursive_call: bool = False) -> list():
+    def move_possibility(self,  board, position: tuple = (), color: str = None, check_move: bool = False, recursive_call: bool = False) -> list:
         """
         Created a list of allowed positions for the Piece
 
         keyword arguments:
-        position -- position of the part
+        position -- position of the piece
         board -- instance of the Board class
         color -- color of the piece
         check_move -- option to also check for forbidden moves for the opponent king
         recursive_call -- Option to avoid infinite recursion when this method is called from board.all_move_possibility
         """
 
+        if len(position) == 0:
+            position = self.position
         if color == None:
             color = self.color
         lst_position = []
@@ -302,11 +316,9 @@ class King(Piece):
         if recursive_call == False:
             # SORTS IN THE LIST OF POSSIBILITY OF MOVEMENT OF THE KING, WHICH SQUARE ARE NOT ACCESSIBLE BECAUSE WOULD PUT THE RO IN FAILUR
             pos_king = 0 if color == 'black' else 7
-            lst_all_possibility = board.all_move_possibility(
-                board.color_adv(), True)
             n_lst = []
             for pos in lst_position:
-                if not board.is_attacked(lst_all_possibility, pos):
+                if not board.is_attacked(pos):
                     n_lst.append(pos)
             lst_position = n_lst
 
@@ -317,7 +329,7 @@ class King(Piece):
                 if (board.square[pos_king][0].name == 'ROOK' and board.square[pos_king][0].color == color and
                         board.square[pos_king][0].first_move and board.square[pos_king][0].first_move):
                     for i in range(1, 4):
-                        if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked(lst_all_possibility, (pos_king, i)):
+                        if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked((pos_king, i)):
                             casteling_left = False
                     if casteling_left:
                         n_lst.append((pos_king, 2))
@@ -325,7 +337,7 @@ class King(Piece):
                 if (board.square[pos_king][7].name == 'ROOK' and board.square[pos_king][7].color == color and
                         board.square[pos_king][7].first_move and board.square[pos_king][7].first_move):
                     for i in range(5, 7):
-                        if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked(lst_all_possibility, (pos_king, i)):
+                        if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked((pos_king, i)):
                             casteling_right = False
                     if casteling_right:
                         n_lst.append((pos_king, 6))
@@ -334,7 +346,7 @@ class King(Piece):
 
         return lst_position
 
-    def move(self, board, new_position: tuple(), move_possibility: list()) -> None:
+    def move(self, board, new_position: tuple, move_possibility: list) -> None:
         """
         Move a piece on the board
 
@@ -362,17 +374,20 @@ class Pawn(Piece):
     def __str__(self) -> str:
         return f"{self.color} Pawn"
 
-    def move_possibility(self, position: tuple(), board, color: str = None, check_move: str = False) -> list():
+    def move_possibility(self,  board, position: tuple = (), color: str = None, check_move: str = False) -> list:
         """
         Created a list of allowed positions for the Piece
 
         keyword arguments:
-        position -- position of the part
+        position -- position of the piece
         board -- instance of the Board class
         color -- color of the piece
         check_move -- option to also check for forbidden moves for the opponent king
         """
-        
+
+        if len(position) == 0:
+            position = self.position
+
         if color == None:
             color = self.color
         if color == 'white':

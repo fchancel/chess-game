@@ -36,9 +36,7 @@ if __name__ == "__main__":
                         graph_engine.blit_board()
                         graph_engine.blit_pieces(board)
                         graph_engine.blit_select_piece(position)
-                        lst_move_possibility = piece.move_possibility(
-                            position, board)
-                        lst_move_possibility = board.move_is_check(lst_move_possibility, board, piece)
+                        lst_move_possibility = board.move_authorized(piece)
                         graph_engine.blit_move_possibility(
                             lst_move_possibility, board)
 
