@@ -1,5 +1,4 @@
 from piece import Piece, Rook, Bishop, Knight, Pawn, King, Queen
-import config
 import copy
 
 
@@ -38,75 +37,100 @@ class Board():
         ]
         self.color_play = "white"
         self.nb_hit = 0
-        self.white_castling = True
-        self.black_castling = True
 
     def add_hit(self) -> int:
         self.nb_hit += 1
         return self.nb_hit
 
-    def castling_off(self, color) -> None:
-        if color == 'white':
-            self.white_castling = False
-        else:
-            self.black_castling = False
-
-    def get_castling(self, color) -> bool:
-        if color == "white":
-            return self.white_castling
-        else:
-            return self.black_castling
-
-    def change_color_play(self) -> str:
+    def change_color_play(self) -> None:
+        """
+        Change the color of the current player
+        """
         if self.color_play == 'white':
             self.color_play = "black"
         else:
             self.color_play = "white"
 
-    def is_empty_square(self, position) -> bool:
+    def is_empty_square(self, position: tuple) -> bool:
+        """
+        Checks if the square concerned by the position is empty
+        """
         if self.square[position[0]][position[1]].name != 'EMPTY':
             return False
         return True
 
-    def get_color_pawn(self, position):
+    def get_color_pawn(self, position: tuple) -> str:
+        """
+        Returns the color of the Piece associated with the position
+
+        keyword arguments:
+        position -- pawn position to check
+        """
         return self.square[position[0]][position[1]].color
 
-    def all_move_possibility(self, color, check_move=False):
-        print(f'couleur move possibility : {color}')
+    def all_move_possibility(self, color: str, check_move: bool = False) -> list:
+        """
+        Retrieves all square that can be controlled by a color
+
+        keyword arguments:
+        color -- color of the parts 
+        check_move -- option to also check for forbidden moves for the opponent king
+        """
         lst_position = []
         for i, row in enumerate(self.square):
             for j, piece in enumerate(row):
                 if piece.name == 'KING' and piece.color == color:
                     lst_position += piece.move_possibility(
-                        (i, j), self, piece.color, check_move, True)
+                        board=self, color=piece.color, check_move=check_move, recursive_call=True)
                 elif piece.color == color:
                     lst_position += piece.move_possibility(
-                        (i, j), self, piece.color, check_move)
+                        board=self, color=piece.color, check_move=check_move)
         return lst_position
 
-    def is_attacked(self, lst_all_possibility, position):
-        for pos in lst_all_possibility:
-            if position in lst_all_possibility:
-                return True
+    def is_attacked(self, position: tuple) -> bool:
+        """
+        Checks if a position is under attack 
+
+        keyword arguments:
+        position -- position to be checked for the attack
+        """
+        lst_all_possibility = self.all_move_possibility(self.color_adv(), True)
+        if position in lst_all_possibility:
+            return True
         return False
 
-    def all_deselect_piece(self):
+    def all_deselect_piece(self) -> None:
+        """
+        Deselects all pieces on the board
+        """
         for row in self.square:
             for piece in row:
                 piece.selected = False
 
     def piece_selected(self):
+        """
+        Checks if a part is selected.
+        If yes, returns the part
+        If no, returns None
+        """
         for row in self.square:
             for piece in row:
                 if piece.selected:
                     return piece
+        return None
 
-    def color_adv(self):
+    def color_adv(self) -> str:
+        """
+        Return the opponent's color 
+        """
         if self.color_play == "white":
             return 'black'
         return 'white'
 
-    def is_check(self):
+    def is_check(self) -> bool:
+        """
+        Check if the king is in check
+        """
         lst_move_adv = self.all_move_possibility(self.color_adv(), True)
         for row in self.square:
             for piece in row:
@@ -115,11 +139,18 @@ class Board():
                         return True
         return False
 
-    def move_is_check(self, lst_move_possibility, board, piece):
+    def move_authorized(self, piece: Piece) -> list:
+        """
+        Checks the allowed moves for a piece according to the king's check
+
+        keyword arguments:
+        piece -- selectionned piece
+        """
+        lst_move_possibility = piece.move_possibility(self)
         squares_copy = copy.deepcopy(self.square)
         n_lst = []
         for move in lst_move_possibility:
-            piece.move(board, move, lst_move_possibility)
+            piece.move(self, move, lst_move_possibility)
             if not self.is_check():
                 n_lst.append(move)
 
