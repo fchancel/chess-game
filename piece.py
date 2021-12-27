@@ -380,7 +380,7 @@ class Pawn(Piece):
 
     def __init__(self, position, color) -> None:
         super().__init__(position, color, 'PAWN')
-        self.first_move = False
+        self.first_move = None
         if color == 'white':
             self.img = config.WHITE_PAWN
         else:
@@ -431,13 +431,39 @@ class Pawn(Piece):
                         board.get_color_pawn(pos) != color):
                     lst_position.append(pos)
 
-            for pos in position_en_passant:
-                if (pos[0] <= 7 and pos[0] >= 0 and pos[1] <= 7 and pos[1] >= 0 and not board.is_empty_square(pos) and
-                        board.get_color_pawn(pos) != color and board.square[pos[0]][pos[1]].name == "PAWN" and board.square[pos[0]][pos[1]].first_move):
-                    lst_position.append((pos[0] + value, pos[1]))
+            if position[0] == en_passant:
+                for pos in position_en_passant:
+                    if (pos[0] <= 7 and pos[0] >= 0 and pos[1] <= 7 and pos[1] >= 0 and not board.is_empty_square(pos) and
+                            board.get_color_pawn(pos) != color and board.square[pos[0]][pos[1]].name == "PAWN" and board.square[pos[0]][pos[1]].first_move):
+
+                        lst_position.append((pos[0] + value, pos[1]))
 
         else:
             for pos in position_attack:
                 if pos[0] + value <= 7 and pos[0] > 0 and pos[1] <= 7 and pos[1] >= 0:
                     lst_position.append(pos)
         return lst_position
+
+    def move(self, board, new_position: tuple, move_possibility: list) -> None:
+        """
+        Move a piece on the board
+
+        keyword arguments:
+        board -- instance of class Board
+        new_position -- new position on the board for the piece
+        move_possibility -- list of possible positions for the piece
+        """
+        if self.position[1] != new_position[1] and board.is_empty_square(new_position):
+            value = 1 if self.color == "white" else -1
+            board.square[new_position[0] + value][new_position[1]] = Piece()
+
+        super().move(board, new_position, move_possibility)
+        
+        for row in board.square:
+            for piece in row:
+                if piece.color == board.color_play and piece.name == "PAWN" and piece.first_move:
+                    piece.first_move = False
+        if self.first_move == None:
+            self.first_move = True
+        elif self.first_move:
+            self.first_move = False
