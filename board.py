@@ -37,10 +37,11 @@ class Board():
         ]
         self.color_play = "white"
         self.nb_hit = 0
+        self.nb_hit_since_last_eat = 0
 
-    def add_hit(self) -> int:
+    def add_hit(self):
         self.nb_hit += 1
-        return self.nb_hit
+        self.nb_hit_since_last_eat += 1
 
     def change_color_play(self) -> None:
         """

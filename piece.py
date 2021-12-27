@@ -31,6 +31,7 @@ class Piece():
         new_position -- new position on the board for the piece
         move_possibility -- list of possible positions for the piece
         """
+
         if new_position in move_possibility:
             board.square[new_position[0]][new_position[1]
                                           ] = board.square[self.position[0]][self.position[1]]
@@ -62,8 +63,6 @@ class Rook(Piece):
         color -- color of the piece
         check_move -- option to also check for forbidden moves for the opponent king
         """
-        print(len(position))
-        print(position)
         if len(position) == 0:
             position = self.position
         if color == None:
@@ -275,6 +274,7 @@ class King(Piece):
     def __init__(self, position, color) -> None:
         super().__init__(position, color, "KING")
         self.first_move = True
+        self.castling_possibility = False
         if color == 'white':
             self.img = config.WHITE_KING
         else:
@@ -322,8 +322,8 @@ class King(Piece):
                     n_lst.append(pos)
             lst_position = n_lst
 
-            casteling_left = True
-            casteling_right = True
+            casteling_left = False
+            casteling_right = False
             # MANAGE IF CASTELING IS POSSIBLE
             if self.first_move == True:
                 if (board.square[pos_king][0].name == 'ROOK' and board.square[pos_king][0].color == color and
@@ -331,6 +331,8 @@ class King(Piece):
                     for i in range(1, 4):
                         if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked((pos_king, i)):
                             casteling_left = False
+                        else:
+                            casteling_left = True
                     if casteling_left:
                         n_lst.append((pos_king, 2))
 
@@ -339,9 +341,14 @@ class King(Piece):
                     for i in range(5, 7):
                         if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked((pos_king, i)):
                             casteling_right = False
+                        else:
+                            casteling_right = True
                     if casteling_right:
                         n_lst.append((pos_king, 6))
-
+            if casteling_right or casteling_left:
+                self.castling_possibility = True
+            else:
+                self.castling_possibility = False
             return n_lst
 
         return lst_position
@@ -358,6 +365,14 @@ class King(Piece):
         super().move(board, new_position, move_possibility)
         if self.first_move:
             self.first_move = False
+        if self.castling_possibility:
+            pos_king = 0 if self.color == 'black' else 7
+            if new_position == (pos_king, 2):
+                board.square[pos_king][0].move(
+                    board, (pos_king, 3), [(pos_king, 3)])
+            elif new_position == (pos_king, 6):
+                board.square[pos_king][7].move(
+                    board, (pos_king, 5), [(pos_king, 5)])
 
 
 class Pawn(Piece):

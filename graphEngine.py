@@ -63,3 +63,10 @@ class GraphEngine():
                              self.lst_board_rect[pos[0]][pos[1]])
         
         self.blit_pieces(board)
+
+    def blit_king_check(self, board):
+        for row in board.square:
+            for piece in row:
+                if piece.name == "KING" and piece.color == board.color_play:
+                    pygame.draw.rect(self.screen, pygame.Color(config.COLOR_CHECK),
+                             self.lst_board_rect[piece.position[0]][piece.position[1]])

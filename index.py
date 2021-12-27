@@ -26,10 +26,13 @@ if __name__ == "__main__":
                     if piece_selected and position in lst_move_possibility:
                         piece_selected.move(
                             board, position, lst_move_possibility)
+                        board.change_color_play()
                         graph_engine.blit_board()
+                        if board.is_check():
+                            graph_engine.blit_king_check(board)
                         graph_engine.blit_pieces(board)
                         piece_selected.selected = False
-                        board.change_color_play()
+
                     elif piece.color == board.color_play:
                         board.all_deselect_piece()
                         piece.selected = True
@@ -37,6 +40,8 @@ if __name__ == "__main__":
                         graph_engine.blit_pieces(board)
                         graph_engine.blit_select_piece(position)
                         lst_move_possibility = board.move_authorized(piece)
+                        if board.is_check():
+                            graph_engine.blit_king_check(board)
                         graph_engine.blit_move_possibility(
                             lst_move_possibility, board)
 
