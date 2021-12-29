@@ -38,6 +38,9 @@ class Board():
         self.color_play = "white"
         self.nb_hit = 0
         self.nb_hit_since_last_eat = 0
+        self.last_move_piece = None
+        self.last_move_old_position = None
+        self.last_move_new_position = None
 
     def add_hit(self):
         self.nb_hit += 1
@@ -74,7 +77,7 @@ class Board():
         Retrieves all square that can be controlled by a color
 
         keyword arguments:
-        color -- color of the parts 
+        color -- color of the parts
         check_move -- option to also check for forbidden moves for the opponent king
         """
         lst_position = []
@@ -90,7 +93,7 @@ class Board():
 
     def is_attacked(self, position: tuple) -> bool:
         """
-        Checks if a position is under attack 
+        Checks if a position is under attack
 
         keyword arguments:
         position -- position to be checked for the attack
@@ -122,7 +125,7 @@ class Board():
 
     def color_adv(self) -> str:
         """
-        Return the opponent's color 
+        Return the opponent's color
         """
         if self.color_play == "white":
             return 'black'
@@ -154,6 +157,14 @@ class Board():
             piece.move(self, move, lst_move_possibility)
             if not self.is_check():
                 n_lst.append(move)
-
+            self.cancel_last_move()
         self.square = squares_copy
         return n_lst
+
+    def cancel_last_move(self):
+        if self.last_move_piece != None:
+            self.square[self.last_move_old_position[0]][self.last_move_old_position[1]
+                                                        ] = self.square[self.last_move_new_position[0]][self.last_move_new_position[1]]
+            self.square[self.last_move_new_position[0]][self.last_move_new_position[1]].position = self.last_move_old_position
+            self.square[self.last_move_new_position[0]
+                        ][self.last_move_new_position[1]] = self.last_move_piece

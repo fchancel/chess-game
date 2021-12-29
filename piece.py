@@ -33,6 +33,10 @@ class Piece():
         """
 
         if new_position in move_possibility:
+            board.last_move_piece = board.square[new_position[0]][new_position[1]]
+            board.last_move_old_position = self.position
+            board.last_move_new_position = new_position
+
             board.square[new_position[0]][new_position[1]
                                           ] = board.square[self.position[0]][self.position[1]]
             board.square[self.position[0]][self.position[1]] = Piece()
@@ -165,6 +169,7 @@ class Bishop(Piece):
             self.img = config.BLACK_BISHOP
 
     def __str__(self) -> str:
+        # return f"{self.color} Bishop"
         return f"{self.color} Bishop"
 
     def move_possibility(self, board, position: tuple = (), color: str = None, check_move: bool = False) -> list:
@@ -200,12 +205,11 @@ class Bishop(Piece):
             begin_to_l = [0, 7 - abs(begin_to_l)]
         else:
             begin_to_l = [begin_to_l, 7]
-
         for i in range(0, 8):
             if (bool_right and sum(position) != sum(begin_to_r) + (i * 2) and begin_to_r[0] + i <= 7 and begin_to_r[1] + i <= 7):
                 if not board.is_empty_square((begin_to_r[0] + i, begin_to_r[1] + i)):
                     # CHECK IF THE CHECKED SQUARE IS BEFORE THE ORIGINAL POSITION OF THE BISHOP
-                    if (sum(begin_to_r) + (i*2)) < sum(position):
+                    if begin_to_r[0] + i < position[0]:
                         lst_pos_to_r = []
                     else:
                         bool_right = False
@@ -331,6 +335,7 @@ class King(Piece):
                     for i in range(1, 4):
                         if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked((pos_king, i)):
                             casteling_left = False
+                            break
                         else:
                             casteling_left = True
                     if casteling_left:
@@ -341,6 +346,7 @@ class King(Piece):
                     for i in range(5, 7):
                         if board.square[pos_king][i].name != 'EMPTY' or board.is_attacked((pos_king, i)):
                             casteling_right = False
+                            break
                         else:
                             casteling_right = True
                     if casteling_right:
@@ -421,7 +427,7 @@ class Pawn(Piece):
 
         lst_position = []
         if not check_move:
-            if position[0] + value <= 7 and position[0] > 0 and board.is_empty_square((position[0] + value, position[1])):
+            if position[0] + value <= 7 and position[0] >= 0 and board.is_empty_square((position[0] + value, position[1])):
                 lst_position.append((position[0] + value, position[1]))
                 if position[0] == base_position and board.is_empty_square((position[0] + value * 2, position[1])):
                     lst_position.append((position[0] + value * 2, position[1]))
@@ -440,7 +446,7 @@ class Pawn(Piece):
 
         else:
             for pos in position_attack:
-                if pos[0] + value <= 7 and pos[0] > 0 and pos[1] <= 7 and pos[1] >= 0:
+                if pos[0] <= 7 and pos[0] >= 0 and pos[1] <= 7 and pos[1] >= 0:
                     lst_position.append(pos)
         return lst_position
 
@@ -458,7 +464,7 @@ class Pawn(Piece):
             board.square[new_position[0] + value][new_position[1]] = Piece()
 
         super().move(board, new_position, move_possibility)
-        
+
         for row in board.square:
             for piece in row:
                 if piece.color == board.color_play and piece.name == "PAWN" and piece.first_move:
