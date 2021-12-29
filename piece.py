@@ -33,7 +33,8 @@ class Piece():
         """
 
         if new_position in move_possibility:
-            board.last_move_piece = board.square[new_position[0]][new_position[1]]
+            board.last_move_piece = board.square[new_position[0]
+                                                 ][new_position[1]]
             board.last_move_old_position = self.position
             board.last_move_new_position = new_position
 
@@ -459,11 +460,18 @@ class Pawn(Piece):
         new_position -- new position on the board for the piece
         move_possibility -- list of possible positions for the piece
         """
+
+        # MANAGE EN PASSANT
         if self.position[1] != new_position[1] and board.is_empty_square(new_position):
             value = 1 if self.color == "white" else -1
             board.square[new_position[0] + value][new_position[1]] = Piece()
 
         super().move(board, new_position, move_possibility)
+
+        level_up_pos = 0 if self.color == "white" else 7
+
+        if self.position[0] == level_up_pos:
+            board.square[self.position[0]][self.position[1]] = Queen(self.position, self.color)
 
         for row in board.square:
             for piece in row:
