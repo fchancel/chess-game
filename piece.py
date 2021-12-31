@@ -3,7 +3,7 @@ import config
 
 
 class Piece():
-    def __init__(self, position: tuple = (), color: str = "", name: str = 'EMPTY') -> None:
+    def __init__(self, position: tuple = (), color: str = "", name: str = 'EMPTY', value=0) -> None:
         """
         Initializes a piece of the chess game.
         If the keyword name is EMPTY, then the square is empty
@@ -18,9 +18,11 @@ class Piece():
         self.name = name
         self.selected = False
         self.position = position
+        self.value=value
 
     def __str__(self) -> str:
         return self.name
+        
 
     def move(self, board, new_position: tuple, move_possibility: list) -> None:
         """
@@ -45,10 +47,9 @@ class Piece():
 
 
 class Rook(Piece):
-    value = 5
 
     def __init__(self, position, color) -> None:
-        super().__init__(position, color, "ROOK")
+        super().__init__(position, color, "ROOK", 5)
         self.first_move = True
         if color == 'white':
             self.img = config.WHITE_ROOK
@@ -117,10 +118,9 @@ class Rook(Piece):
 
 
 class Knight(Piece):
-    value = 3
 
     def __init__(self, position, color) -> None:
-        super().__init__(position, color, 'KNIGHT')
+        super().__init__(position, color, 'KNIGHT', 3)
         if color == 'white':
             self.img = config.WHITE_KNIGHT
         else:
@@ -160,10 +160,9 @@ class Knight(Piece):
 
 
 class Bishop(Piece):
-    value = 3
 
     def __init__(self, position, color) -> None:
-        super().__init__(position, color, 'BISHOP')
+        super().__init__(position, color, 'BISHOP', 3)
         if color == 'white':
             self.img = config.WHITE_BISHOP
         else:
@@ -239,10 +238,9 @@ class Bishop(Piece):
 
 
 class Queen(Piece):
-    value = 9
-
+    
     def __init__(self, position, color) -> None:
-        super().__init__(position, color, 'QUEEN')
+        super().__init__(position, color, 'QUEEN', 9)
         if color == 'white':
             self.img = config.WHITE_QUEEN
         else:
@@ -274,7 +272,6 @@ class Queen(Piece):
 
 
 class King(Piece):
-    value = 0
 
     def __init__(self, position, color) -> None:
         super().__init__(position, color, "KING")
@@ -383,10 +380,9 @@ class King(Piece):
 
 
 class Pawn(Piece):
-    value = 1
 
     def __init__(self, position, color) -> None:
-        super().__init__(position, color, 'PAWN')
+        super().__init__(position, color, 'PAWN', 1)
         self.first_move = None
         if color == 'white':
             self.img = config.WHITE_PAWN

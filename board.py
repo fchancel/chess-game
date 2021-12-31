@@ -24,27 +24,12 @@ class Board():
             [Rook((7, 0), 'white'), Knight((7, 1), 'white'), Bishop((7, 2), 'white'), Queen((7, 3), 'white'),
              King((7, 4), 'white'), Bishop((7, 5), 'white'), Knight((7, 6), 'white'), Rook((7, 7), 'white')],
         ]
-
-        self.coord = [
-            ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'],
-            ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'],
-            ['a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6'],
-            ['a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5'],
-            ['a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4'],
-            ['a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3'],
-            ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'],
-            ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1']
-        ]
         self.color_play = "white"
         self.nb_hit = 0
         self.nb_hit_since_last_eat = 0
         self.last_move_piece = None
         self.last_move_old_position = None
         self.last_move_new_position = None
-
-    def add_hit(self):
-        self.nb_hit += 1
-        self.nb_hit_since_last_eat += 1
 
     def change_color_play(self) -> None:
         """
@@ -161,10 +146,14 @@ class Board():
         self.square = squares_copy
         return n_lst
 
-    def cancel_last_move(self):
+    def cancel_last_move(self) -> None:
+        """
+        cancel the last move playing
+        """
         if self.last_move_piece != None:
             self.square[self.last_move_old_position[0]][self.last_move_old_position[1]
                                                         ] = self.square[self.last_move_new_position[0]][self.last_move_new_position[1]]
-            self.square[self.last_move_new_position[0]][self.last_move_new_position[1]].position = self.last_move_old_position
+            self.square[self.last_move_new_position[0]
+                        ][self.last_move_new_position[1]].position = self.last_move_old_position
             self.square[self.last_move_new_position[0]
                         ][self.last_move_new_position[1]] = self.last_move_piece
