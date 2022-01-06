@@ -43,7 +43,6 @@ class GraphEngine():
                     piece_img_rect = piece_img.get_rect(
                         center=self.lst_board_rect[i][j].center)
                     self.screen.blit(piece_img, piece_img_rect)
-                    
 
     def blit_board(self):
         self.screen.blit(self.board_img, self.position_board)
@@ -59,9 +58,13 @@ class GraphEngine():
 
     def blit_move_possibility(self, move_possibility, board):
         for pos in move_possibility:
-            pygame.draw.rect(self.screen, pygame.Color(config.COLOR_MOVE_POSSIBILITY),
-                             self.lst_board_rect[pos[0]][pos[1]])
-        
+            if board.is_empty_square(pos):
+                pygame.draw.circle(self.screen, pygame.Color(config.COLOR_MOVE_POSSIBILITY),
+                                   self.lst_board_rect[pos[0]][pos[1]].center, 10)
+            else:
+                pygame.draw.circle(self.screen, pygame.Color(config.COLOR_MOVE_POSSIBILITY),
+                                   self.lst_board_rect[pos[0]][pos[1]].center, self.size_square//2.1, width=5)
+
         self.blit_pieces(board)
 
     def blit_king_check(self, board):
@@ -69,4 +72,4 @@ class GraphEngine():
             for piece in row:
                 if piece.name == "KING" and piece.color == board.color_play:
                     pygame.draw.rect(self.screen, pygame.Color(config.COLOR_CHECK),
-                             self.lst_board_rect[piece.position[0]][piece.position[1]])
+                                     self.lst_board_rect[piece.position[0]][piece.position[1]])
