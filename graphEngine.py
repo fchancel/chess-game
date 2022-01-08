@@ -30,6 +30,13 @@ class GraphEngine():
         board_img = pygame.image.load(config.BOARD)
         return pygame.transform.scale(board_img, self.size_board)
 
+    def _rect_alpha(self, color, position, alpha=128):
+        surface = pygame.Surface((self.size_square, self.size_square))
+        surface.set_alpha(alpha)
+        surface.fill(color)
+        self.screen.blit(
+            surface, self.lst_board_rect[position[0]][position[1]])
+
     def flip(self):
         pygame.display.flip()
 
@@ -53,8 +60,7 @@ class GraphEngine():
         return (pos_x, pos_y)
 
     def blit_select_piece(self, position):
-        pygame.draw.rect(self.screen, pygame.Color(15, 15, 15),
-                         self.lst_board_rect[position[0]][position[1]])
+        self._rect_alpha(config.COLOR_SELECT_PIECE, position)
 
     def blit_move_possibility(self, move_possibility, board):
         for pos in move_possibility:
@@ -71,5 +77,11 @@ class GraphEngine():
         for row in board.square:
             for piece in row:
                 if piece.name == "KING" and piece.color == board.color_play:
-                    pygame.draw.rect(self.screen, pygame.Color(config.COLOR_CHECK),
-                                     self.lst_board_rect[piece.position[0]][piece.position[1]])
+                    self._rect_alpha(config.COLOR_CHECK, piece.position, 180)
+
+    def blit_last_move(self, board):
+        if board.last_move_piece:
+            self._rect_alpha(config.COLOR_SELECT_PIECE,
+                             board.last_move_old_position)
+            self._rect_alpha(config.COLOR_SELECT_PIECE,
+                             board.last_move_new_position)

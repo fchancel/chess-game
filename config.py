@@ -34,5 +34,6 @@ BLACK_KING = 'asset/chess-king-black1.png'
 #               COLOR
 # =========================================
 
-COLOR_MOVE_POSSIBILITY = ((200, 200, 210))
+COLOR_MOVE_POSSIBILITY = ((100, 100, 110))
 COLOR_CHECK = ((178, 34, 34))
+COLOR_SELECT_PIECE = ((253, 216, 53))

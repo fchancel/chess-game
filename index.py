@@ -18,12 +18,12 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-
+                
                 if event.button == 1:
                     position = graph_engine.get_position_board(event.pos)
                     piece = board.square[position[0]][position[1]]
                     piece_selected = board.piece_selected()
-
+                    
                     if piece_selected and position in lst_move_possibility:
                         piece_selected.move(
                             board, position, lst_move_possibility)
@@ -31,6 +31,7 @@ if __name__ == "__main__":
                         graph_engine.blit_board()
                         if board.is_check():
                             graph_engine.blit_king_check(board)
+                        graph_engine.blit_last_move(board)
                         graph_engine.blit_pieces(board)
                         piece_selected.selected = False
 
@@ -40,6 +41,7 @@ if __name__ == "__main__":
                         graph_engine.blit_board()
                         graph_engine.blit_pieces(board)
                         graph_engine.blit_select_piece(position)
+                        graph_engine.blit_last_move(board)
                         lst_move_possibility = board.move_authorized(piece)
                         if board.is_check():
                             graph_engine.blit_king_check(board)

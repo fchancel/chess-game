@@ -138,15 +138,21 @@ class Board():
         lst_move_possibility = piece.move_possibility(self)
         squares_copy = copy.deepcopy(self.square)
         n_lst = []
+        l_move_piece = self.last_move_piece
+        l_move_old_position = self.last_move_old_position
+        l_move_new_position = self.last_move_new_position
         for move in lst_move_possibility:
             piece.move(self, move, lst_move_possibility)
             if not self.is_check():
                 n_lst.append(move)
             self.cancel_last_move()
         self.square = squares_copy
+        self.last_move_piece = l_move_piece
+        self.last_move_old_position = l_move_old_position
+        self.last_move_new_position = l_move_new_position
         return n_lst
 
-    def cancel_last_move(self) -> None:
+    def cancel_last_move(self, check_move=False) -> None:
         """
         cancel the last move playing
         """
