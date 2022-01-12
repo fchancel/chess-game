@@ -9,4 +9,4 @@ Simple chess game to play against a human opponent locally
 `python index.py`
 
 ## DEMO
-![](https://raw.githubusercontent.com/fchancel/chess-game/master/demo/chess-demo.gif)
+![](https://github.com/fchancel/chess-game/blob/master/demo/chess.gif?raw=true)
